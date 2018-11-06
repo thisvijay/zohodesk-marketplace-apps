@@ -1,0 +1,81 @@
+body{
+    padding:0px 10px;
+}
+.property{
+    padding:10px;
+    width:150px;
+    text-align:center;
+}
+.extras.property{
+    font-size:12px !important;
+    display:inline-flex;
+}
+.extras.property .value{
+    font-size:12px !important;
+    color:grey;
+    padding:0px 10px;
+}
+.extras.property .key{
+    font-size:12px !important;
+    background-color:white;
+}
+.value{
+    border-radius:100px;
+    text-align:center;
+    display:inline-block;
+    font-size:20px;
+    padding:5px 11px;
+}
+#likes .value{
+    background-color:crimson;
+    color:white;
+}
+#replies .value{
+    background-color:navy;
+    color:white;
+}
+.key{
+    color : grey;
+    padding: 7px;
+    padding-top:12px;
+    padding-bottom:10px;
+    text-transform: capitalize;
+    background-color: whitesmoke;
+    margin-top:-10px;
+    font-size:16px;
+}
+.value{
+    
+}
+#mark_spam{
+    position:fixed;
+    bottom:50px;
+    margin-left:10px;
+    margin-top:-20px;
+}
+.button{
+    display:inline-block;
+    padding:5px 10px;
+    cursor:pointer;
+    border-radius:5px;
+}
+.back-crimson{
+    background-color:crimson;
+    color:white;
+}
+.button.back-crimson:hover{
+    background-color:darkred;
+}
+.status-text{
+    padding:6px 15px;
+    margin-top:10px;
+    margin-left:10px;
+    border-radius:5px;
+    border:1px dotted;
+}
+.status-text.true{
+    color:royalblue;
+}
+.status-text.false{
+    color:crimson;
+}
