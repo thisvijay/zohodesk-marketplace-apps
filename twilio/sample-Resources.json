@@ -1,0 +1,13 @@
+{
+    "channel":{
+        "channelLogoPath":"/app/img/twilio_logo.jpg",
+        "acceptAttachments": false,
+        "updateRecords": false,
+        "includeQuotedMessage":false,
+        "contentTypes": ["text/plain"],
+        "sync": {
+            "push": "https://zohodesk-extension.herokuapp.com/twilio/addReply.php",
+            "pull": "https://zohodesk-extension.herokuapp.com/twilio/pullMessagesEnable.php"
+        }
+    }
+}

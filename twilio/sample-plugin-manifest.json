@@ -1,0 +1,78 @@
+{
+  "locale": ["en"],
+  "service": "DESK",
+  "storage": true,
+  "type": "org",
+  "whiteListedDomains": ["https://api.twilio.com","https://desk.zoho.com","https://zohodesk-extension.herokuapp.com"],
+  "secret":"vijayakumar.mk+20180801@secretkey.zohocorp.com",
+  "modules": {
+    "widgets": [
+      {
+        "location": "desk.ticket.detail.rightpanel",
+        "url": "/app/widget1.html",
+        "name": "Desk1 Extension",
+        "logo": "/app/img/logo.png",
+        "icon": "/app/img/icon.png"
+      },
+      {
+        "location": "desk.ticket.thread.moreaction",
+        "url": "/app/threaddetailwidget.html",
+        "name": "Twilio Info",
+        "logo": "/app/img/logo.png",
+        "icon": "/app/img/icon.png"
+      }
+    ]
+  },
+  "oauth":[
+  ],
+  "callbackListener":{
+        "onConfigParamAdd": "https://zohodesk-extension.herokuapp.com/twilio/subscribe.php"
+  },
+  "connectors": [
+        {
+            "connectionLinkName":"for_twilio_bird",
+            "connectionName":"For_Twilio_Bird",
+            "serviceName":"zlabs_integration",
+            "userAccess":true,
+            "isUserDefinedService":false,
+            "scope":["Desk.tickets.ALL","Desk.contacts.READ","Desk.contacts.WRITE","Desk.contacts.UPDATE","Desk.contacts.CREATE","Desk.extensions.ALL","Desk.settings.ALL"]
+        }
+  ],
+  "config": [
+        {
+            "name":"Twilio_SID",
+            "userdefined":true,
+            "type":"text",
+            "mandatory":true,
+            "secure":false
+        },
+        {
+            "name":"Twilio_Authtoken",
+            "userdefined":true,
+            "type":"text",
+            "mandatory":true,
+            "secure":false
+        },
+        {
+            "name":"Configured_Whatsapp_Number",
+            "userdefined":true,
+            "type":"text",
+            "mandatory":false,
+            "secure":false
+        },
+        {
+            "name":"Twilio_Service_SID",
+            "userdefined":false,
+            "type":"text",
+            "mandatory":false,
+            "secure":false
+        },
+        {
+            "name":"Twilio_Service_Phone_Number",
+            "userdefined":false,
+            "type":"text",
+            "mandatory":false,
+            "secure":false
+        }
+   ]
+}
