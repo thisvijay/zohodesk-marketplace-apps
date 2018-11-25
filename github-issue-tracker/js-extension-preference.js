@@ -1,3 +1,8 @@
+var my_awesome_script = document.createElement('script');
+
+my_awesome_script.setAttribute('src','https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js');
+
+document.head.appendChild(my_awesome_script);
 var storage = {
     
 };

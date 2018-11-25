@@ -15,7 +15,10 @@
             $target_headers['Content-Type'] = 'application/json';
         }
         $headers_json = json_encode($target_headers);
-        $deskConnectionName = 'for_github_app';
+        $deskConnectionName = 'for_twilio_bird';
+        if(strpos($target_url, "api.github.com")>0){
+            $deskConnectionName = "my_githubcon";
+        }
         $postFields = array(
             'securityContext'=>$security_context,
             'requestURL'=>$target_url,
