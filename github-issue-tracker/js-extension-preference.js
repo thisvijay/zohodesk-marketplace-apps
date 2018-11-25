@@ -20,6 +20,9 @@ function getRepos(){
                     $('#table-repodir').append(getRepoRowTemplate(data[item], storage.hasOwnProperty(data[item].name)));
                 }
                 initEvents();
+            },
+            error: function (jqXHR, exception) {
+                $('#table-repodir').append("<i>Cannot get repository details, Please try again. Error:"+exception+"</i>");
             }
         });
 }
