@@ -119,3 +119,39 @@ td:first-of-type{
 				120px 120px;
 		}
 	}
+.error{
+  margin: 5px;
+  padding: 10px;
+  background-color: rgba(200,0,0,0.8);
+  color: white;
+  line-height: 1.5;
+  position: relative;
+  padding-bottom: 15px;
+}
+.errclose{
+  display: inline-block;
+  color: black;
+  padding: 2px 7px 1px;
+  text-align: center;
+  position: absolute;
+  top: 5px;
+  right: 5px;
+  background-color: white;
+  font-size: 12px;
+}
+.errclose:hover{
+  cursor: pointer;
+  background-color: red;
+  color: white;
+}
+.errtime{
+  font-size: 12px;
+  margin-right: 5px;
+  margin-top: 5px;
+  position: absolute;
+  right: 0px;
+  bottom: 0px;
+}
+pre{
+  margin: 0px;
+}

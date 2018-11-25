@@ -17,14 +17,19 @@ function getRepos(){
             success : function(data){
                 for (var item in data) {
                     $('.skeleton').hide();
-                    $('#table-repodir').append(getRepoRowTemplate(data[item], storage.hasOwnProperty(data[item].name)));
+                    $('#table-repodir').prepend(getRepoRowTemplate(data[item], storage.hasOwnProperty(data[item].name)));
                 }
                 initEvents();
             },
             error: function (jqXHR, exception) {
-                $('#table-repodir').append("<i>Cannot get repository details, Please try again. Error "+jqXHR.status+" :<code>"+jqXHR.responseText+"</code></i>");
+                let id = "err-"+new Date().getTime();
+                $('#log-holder').append("<div id=\""+id+"\" class=\"error\"><b class=\"errclose\" onclick=\"removeElem(\'#"+id+"\')\">X</b><i>Cannot get repository details. Error "+jqXHR.status+" :<code>"+jqXHR.responseText+"</code></i><div class=\"errtime\">"+new Date().toLocaleTimeString()+"</div></div>");
+                $("#"+id).hide().slideDown();
             }
         });
+}
+function removeElem(id){
+    $(id).slideUp();
 }
 function subscribe(repo_name){
     var subscribe_url = "https://5ebba2c4.ngrok.io/github_listener.php?appOrgId=$r_orgId&appSecurityContext=$r_securityContext";
@@ -52,6 +57,11 @@ function subscribe(repo_name){
                 console.log(data);
                 storeToStorage(repo_name, data.id);
                 successSubscribe(repo_name);
+            },
+            error: function (jqXHR, exception) {
+                let id = "err-"+new Date().getTime();
+                $('#log-holder').prepend("<div id=\""+id+"\" class=\"error\"><b class=\"errclose\" onclick=\"removeElem(\'#"+id+"\')\">X</b><i>Error while subscribing to <b>"+repo_name+"</b>. Error "+jqXHR.status+" :<code>"+jqXHR.responseText+"</code></i><div class=\"errtime\">"+new Date().toLocaleTimeString()+"</div></div>");
+                $("#"+id).hide().slideDown();
             }
         });
 }
@@ -67,6 +77,11 @@ function un_subscribe(repo_name){
                 console.log(data);
                 deleteFromStorage(repo_name);
                 successUnSubscribe(repo_name);
+            },
+            error: function (jqXHR, exception) {
+                let id = "err-"+new Date().getTime();
+                $('#log-holder').prepend("<div id=\""+id+"\" class=\"error\"><b class=\"errclose\" onclick=\"removeElem(\'#"+id+"\')\">X</b><i>Error while un-subscribing to <b>"+repo_name+"</b>. Error "+jqXHR.status+" :<code>"+jqXHR.responseText+"</code></i><div class=\"errtime\">"+new Date().toLocaleTimeString()+"</div></div>");
+                $("#"+id).hide().slideDown();
             }
         });
 }
