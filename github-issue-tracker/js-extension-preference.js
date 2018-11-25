@@ -22,7 +22,7 @@ function getRepos(){
                 initEvents();
             },
             error: function (jqXHR, exception) {
-                $('#table-repodir').append("<i>Cannot get repository details, Please try again. Error:"+exception+"</i>");
+                $('#table-repodir').append("<i>Cannot get repository details, Please try again. Error "+jqXHR.status+" :<code>"+jqXHR.responseText+"</code></i>");
             }
         });
 }
