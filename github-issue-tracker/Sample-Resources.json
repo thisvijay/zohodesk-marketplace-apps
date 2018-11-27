@@ -1,0 +1,23 @@
+{
+    "fields":[
+        {
+            "module"       : "tickets",
+            "displayLabel" : "GitHub-State",
+            "type"         : "Text",
+            "maxLength"    : "100"
+        }
+    ],
+    "channel":{
+        "channelLogoPath":"/app/img/logo.png",
+        "acceptAttachments": true,
+        "updateRecords": true,
+        "includeQuotedMessage":true,
+        "contentTypes": ["text/plain","text/html"],
+        "redirectUrl": "https://www.sedfed.com/zohodesk-extensions/github/redirect.php",
+        "sync": {
+            "push": "https://www.sedfed.com/zohodesk-extensions/github/desk_listener.php",
+            "pull": "https://www.sedfed.com/zohodesk-extensions/github/issue_supplier.php"
+        }
+    }
+}
+

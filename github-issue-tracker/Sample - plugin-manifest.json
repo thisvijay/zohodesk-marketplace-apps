@@ -1,0 +1,95 @@
+
+{
+  "locale": ["en"],
+  "service": "DESK",
+  "storage": true,
+  "type": "org",
+  "whiteListedDomains": ["https://api.github.com","https://www.sedfed.com","https://desk.zoho.com","https://zohodesk-extension.herokuapp.com"],
+  "secret":"vijayakumar.mk+20180801@secretkey.zohocorp.com",
+  "modules": {
+    "widgets": [
+      {
+        "location": "desk.ticket.detail.subtab",
+        "url": "/app/ticket_details.html",
+        "name": "Issue Details",
+        "logo": "/app/img/logo.png",
+        "icon": "/app/img/icon.png"
+      },
+      {
+        "location": "desk.ticket.thread.moreaction",
+        "url": "/app/thread_details.html",
+        "name": "Comment Details",
+        "logo": "/app/img/logo.png",
+        "icon": "/app/img/icon.png"
+      },
+      {
+        "location": "desk.ticket.detail.rightpanel",
+        "url": "/app/rightpanel.html",
+        "name": "Github Issue Details",
+        "logo": "/app/img/logo.png",
+        "icon": "/app/img/icon.png"
+      },
+      {
+        "location": "desk.extension.preference",
+        "url": "/app/settings.html",
+        "name": "Repository Settings",
+        "logo": "/app/img/logo.png",
+        "icon": "/app/img/icon.png"
+      }
+    ]
+  },
+  "oauth":[
+  ],
+  "callbackListener":{
+        "onTPAAuthorize": "https://www.sedfed.com/zohodesk-extensions/github/setUserInfo.php",
+        "onConfigParamAdd": "https://www.sedfed.com/zohodesk-extensions/github/setUserInfo.php"
+  },
+  "connectors": [
+        {
+            "connectionLinkName":"my_githubcon",
+            "connectionName":"my_githubcon",
+            "serviceName":"github",
+            "userAccess":true,
+            "isUserDefinedService":false,
+            "scope":["user","repo","org_hook","admin:org_hook"]
+        },
+        {
+            "connectionLinkName":"for_twilio_bird",
+            "connectionName":"For_Twilio_Bird",
+            "serviceName":"zlabs_integration",
+            "userAccess":true,
+            "isUserDefinedService":false,
+            "scope":["Desk.tickets.ALL","Desk.contacts.READ","Desk.contacts.WRITE","Desk.contacts.UPDATE","Desk.contacts.CREATE","Desk.extensions.ALL","Desk.settings.ALL"]
+        }
+  ],
+  "config": [
+        {
+            "name":"login",
+            "userdefined":true,
+            "type":"text",
+            "mandatory":false,
+            "secure":false
+        },
+        {
+            "name":"token",
+            "userdefined":true,
+            "type":"text",
+            "mandatory":false,
+            "secure":false
+        },
+        {
+            "name":"credentials",
+            "userdefined":false,
+            "type":"text",
+            "mandatory":false,
+            "secure":false
+        },
+        {
+            "name":"subscriptions",
+            "userdefined":false,
+            "type":"text",
+            "mandatory":false,
+            "secure":false
+        }
+   ]
+}
