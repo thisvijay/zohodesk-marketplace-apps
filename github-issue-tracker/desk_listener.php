@@ -1,12 +1,16 @@
 <?php
 
     include_once './common-functions.php';
+    include_once './url_constructor.php';
     header('Content-Type: application/json');
     $request_body = file_get_contents('php://input');
     error_log(" payload received ".$request_body);
     $request_object = json_decode($request_body);
     $config_params = $request_object->configParams;
     $thread_json = $request_object->resource;
+    
+    $r_security_context = $_REQUEST['securityContext'];
+    $r_orgId = $_REQUEST['orgId'];
     
     $request_response = convertAndPush($thread_json);
     
@@ -24,7 +28,10 @@
             $issue_number = $id[1];
             $author_name = $id[2];
             $post_url = "https://api.github.com/repos/$author_name/$repo_name/issues/$issue_number/comments";
-            $invokeAPIResponse = callDeskInvokeAPI($r_security_context, $post_url, "POST", $r_orgId, json_encode($comment_payload));
+            $invokeAPIResponse = callDeskInvokeAPI($r_security_context, $post_url, $r_orgId, "POST",  json_encode($comment_payload));
+            error_log(" 32 ".json_encode($invokeAPIResponse));
+            $invokeAPIResponse = $invokeAPIResponse->statusMessage;
+            error_log(" 33 ".json_encode($invokeAPIResponse));
             if($invokeAPIResponse==NULL){
                 return null;
             }

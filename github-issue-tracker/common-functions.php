@@ -69,7 +69,7 @@
     }
     
     function createHashForDeskInvokeAPI($params){
-        $desk_secret = "vijayakumar.mk+20180801@secretkey.zohocorp.com";
+        $desk_secret = "my secretkey from manifest";
         $to_be_hashed = "";
         foreach ($params as $key => $value) {
             if($value==NULL){

@@ -1,103 +1,182 @@
-var my_awesome_script = document.createElement('script');
-
-my_awesome_script.setAttribute('src','https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js');
-
-document.head.appendChild(my_awesome_script);
-//ss
-var storage = {
+var repo_vs_subscription_id = {
     
 };
-var username = "thisvijay";
-$(document).ready(function(){
-    storage = JSON.parse(localStorage.getItem("subscriptions"));
-    getRepos();
-});
-var authorization = "Basic "+btoa("thisvijaymail@gmail.com:28b7aaa81664ef46f687b5bd08e4092175e8fe16");
-function getRepos(){
-    $.ajax({
-            url : `https://api.github.com/users/${username}/repos`,
-            headers: {
-                "Authorization" : authorization
-            },
-            method : "GET",
-            success : function(data){
+var git_credentials = {
+    
+};
+window.onload = function () {
+    $("#targetdiv").html("<h3 style=\"color: silver;margin-top: -5px;font-weight: normal;font-size: 30px;float: right;margin-right: 10%;\"> fetching user details...</h3>");
+    ZOHODESK.extension.onload().then(function (App) {
+        ZOHODESK.get("extension.config").then(function(response){
+                console.log(response);
+                var data = response['extension.config'];
                 for (var item in data) {
-                    $('.skeleton').hide();
-                    $('#table-repodir').prepend(getRepoRowTemplate(data[item], storage.hasOwnProperty(data[item].name)));
+                    var configname = data[item]['name'];
+                    if(configname==='login'){
+                        //document.getElementById(data[item]['value']).checked=true;
+                    }
+                    if(configname==='subscriptions'){
+                        repo_vs_subscription_id = JSON.parse(data[item]['value']);
+                        repo_vs_subscription_id = repo_vs_subscription_id === null ? {} : repo_vs_subscription_id;
+                    }
+                    if(configname==='credentials'){
+                        git_credentials = JSON.parse(data[item]['value']);
+                        if(git_credentials!==null && git_credentials.github.username){
+                            greetUser();
+                            getRepos();
+                        }
+                        else{
+                           
+                            initUser();
+                        }
+                    }
                 }
-                initEvents();
-            },
-            error: function (jqXHR, exception) {
+       })
+       .catch(function(err){
+            console.log(err);
+       });
+    });
+}
+function greetUser(){
+    $("#targetdiv").html("<h3 style=\"color: silver;margin-top: -5px;font-weight: normal;font-size: 30px;float: right;margin-right: 10%;\">@"+git_credentials.github.username+"</h3>");
+}
+function initUser(){
+     var reqObj = {
+               url : `https://api.github.com/user`,
+               connectionLinkName : "my_githubcon",
+               type : "GET", headers:{},postBody:{}
+            };
+            ZOHODESK.request(reqObj).then(function(response){
+                var responseJSON = JSON.parse(response);
+                if(responseJSON["statusCode"]==200){
+                    var responseData = JSON.parse(responseJSON["response"]).statusMessage;
+                    var loginName = responseData.login;
+                    git_credentials.github.username = loginName;
+                    greetUser();
+                    try {
+                        ZOHODESK.set('extension.config', {name : 'credentials', value : JSON.stringify(git_credentials)}).then(function(res){
+                            console.log(res);
+                            getRepos();
+                        }).
+                        catch(function(err){
+                            console.log(err);
+                            getRepos();
+                        }).finally(()=>{
+                            console.log("for god's sake");
+                        });
+                    }
+                    catch(e){
+                        console.log(e);
+                        if(git_credentials!==null && git_credentials.github.username){
+                            getRepos();
+                        }
+                    }
+                }
+            }).catch(function(err){
                 let id = "err-"+new Date().getTime();
-                $('#log-holder').append("<div id=\""+id+"\" class=\"error\"><b class=\"errclose\" onclick=\"removeElem(\'#"+id+"\')\">X</b><i>Cannot get repository details. Error "+jqXHR.status+" :<code>"+jqXHR.responseText+"</code></i><div class=\"errtime\">"+new Date().toLocaleTimeString()+"</div></div>");
+                $('#log-holder').prepend("<div id=\""+id+"\" class=\"error\"><b class=\"errclose\" onclick=\"removeElem(\'#"+id+"\')\">X</b><i>Cannot get user details. Error :<code>"+JSON.stringify(err)+"</code></i><div class=\"errtime\">"+new Date().toLocaleTimeString()+"</div></div>");
                 $("#"+id).hide().slideDown();
-            }
-        });
+            });;
+}
+function getRepos(){
+     var reqObj = {
+               url : `https://api.github.com/users/${git_credentials.github.username}/repos`,
+               connectionLinkName : "my_githubcon",
+                type : "GET", headers:{},postBody:{}
+            };
+            ZOHODESK.request(reqObj).then(function(response){
+                var responseJSON = JSON.parse(response);
+                if(responseJSON["statusCode"]==200){
+                   var data = JSON.parse(JSON.parse(responseJSON["response"]).statusMessage);
+                   for (var item in data) {
+                        $('.skeleton').hide();
+                        $('#table-repodir').append(getRepoRowTemplate(data[item], repo_vs_subscription_id.hasOwnProperty(data[item].name)));
+                    }
+                    initEvents();
+                }
+            }).catch(function(err){
+                let id = "err-"+new Date().getTime();
+                $('#log-holder').prepend("<div id=\""+id+"\" class=\"error\"><b class=\"errclose\" onclick=\"removeElem(\'#"+id+"\')\">X</b><i>Cannot get repository details. Error :<code>"+JSON.stringify(err)+"</code></i><div class=\"errtime\">"+new Date().toLocaleTimeString()+"</div></div>");
+                $("#"+id).hide().slideDown();
+            });
 }
 function removeElem(id){
     $(id).slideUp();
 }
 function subscribe(repo_name){
-    var subscribe_url = "https://5ebba2c4.ngrok.io/github_listener.php?appOrgId=$r_orgId&appSecurityContext=$r_securityContext";
-    $.ajax({
-            url : `https://api.github.com/repos/thisvijay/${repo_name}/hooks`,
-            method : "POST",
-            headers: {
-                "Authorization" : authorization,
-                "Content-Type": "application/json"
-            },
-            contentType: 'json',
-            data: JSON.stringify({
-                                    "name": "web",
-                                    "active": true,
-                                    "events": [
-                                      "issues",
-                                      "issue_comment"
-                                    ],
-                                    "config": {
-                                      "url": subscribe_url,
-                                      "content_type": "json"
-                                    }
-                                }),
-            success : function(data){
-                console.log(data);
-                storeToStorage(repo_name, data.id);
-                successSubscribe(repo_name);
-            },
-            error: function (jqXHR, exception) {
+    var subscribe_url = "https://www.sedfed.com/zohodesk-extensions/github/github_listener.php?appOrgId="+git_credentials.desk.orgId+"&appSecurityContext="+git_credentials.desk.securityContext;
+    var reqObj = {
+               url : `https://api.github.com/repos/${git_credentials.github.username}/${repo_name}/hooks`,
+               connectionLinkName : "my_githubcon",
+               type : "POST", 
+               headers:{},
+               postBody:{
+                            "name": "web",
+                            "active": true,
+                            "events": [
+                                "issues",
+                                "issue_comment"
+                            ],
+                            "config": {
+                                "url": subscribe_url,
+                                "content_type": "json"
+                            }
+                        }
+            };
+            ZOHODESK.request(reqObj).then(function(response){
+                var responseJSON = JSON.parse(response);
+                if(responseJSON["statusCode"]==200){
+                    var data = JSON.parse(responseJSON["response"]).statusMessage;
+                    console.log(data);
+                    storeToStorage(repo_name, data.id);
+                    successSubscribe(repo_name);
+                }
+            }).catch(function(err){
                 let id = "err-"+new Date().getTime();
                 $('#log-holder').prepend("<div id=\""+id+"\" class=\"error\"><b class=\"errclose\" onclick=\"removeElem(\'#"+id+"\')\">X</b><i>Error while subscribing to <b>"+repo_name+"</b>. Error "+jqXHR.status+" :<code>"+jqXHR.responseText+"</code></i><div class=\"errtime\">"+new Date().toLocaleTimeString()+"</div></div>");
                 $("#"+id).hide().slideDown();
-            }
-        });
+            });
 }
 function un_subscribe(repo_name){
-    var hook_id = storage[repo_name];
-    $.ajax({
-            url : `https://api.github.com/repos/thisvijay/${repo_name}/hooks/${hook_id}`,
-            method : "DELETE",
-            headers: {
-                "Authorization" : authorization
-            },
-            success : function(data){
-                console.log(data);
-                deleteFromStorage(repo_name);
-                successUnSubscribe(repo_name);
-            },
-            error: function (jqXHR, exception) {
+    var hook_id = repo_vs_subscription_id[repo_name];
+    var reqObj = {
+               url : `https://api.github.com/repos/${git_credentials.github.username}/${repo_name}/hooks/${hook_id}`,
+               connectionLinkName : "my_githubcon",
+               type : "DELETE", 
+               headers:{},
+               postBody:{}
+            };
+            ZOHODESK.request(reqObj).then(function(response){
+                var responseJSON = JSON.parse(response);
+                if(responseJSON["statusCode"]==200){
+                    var data = JSON.parse(responseJSON["response"]).statusMessage;
+                    console.log(data);
+                    deleteFromStorage(repo_name);
+                    successUnSubscribe(repo_name);
+                }
+            }).catch(function(err){
                 let id = "err-"+new Date().getTime();
                 $('#log-holder').prepend("<div id=\""+id+"\" class=\"error\"><b class=\"errclose\" onclick=\"removeElem(\'#"+id+"\')\">X</b><i>Error while un-subscribing to <b>"+repo_name+"</b>. Error "+jqXHR.status+" :<code>"+jqXHR.responseText+"</code></i><div class=\"errtime\">"+new Date().toLocaleTimeString()+"</div></div>");
                 $("#"+id).hide().slideDown();
-            }
-        });
+            });
 }
 function storeToStorage(key, value){
-    storage[key] = value;
-    localStorage.setItem("subscriptions", JSON.stringify(storage));
+    repo_vs_subscription_id[key] = value;
+    ZOHODESK.set('extension.config', {name : 'subscriptions', value : JSON.stringify(repo_vs_subscription_id)}).then(function(res){
+                        console.log(res);
+                    }).
+                    catch(function(err){
+                        console.log(err);
+                    });
 }
 function deleteFromStorage(key){
-    delete storage[key];
-    localStorage.setItem("subscriptions", JSON.stringify(storage));
+    delete repo_vs_subscription_id[key];
+    ZOHODESK.set('extension.config', {name : 'subscriptions', value : JSON.stringify(repo_vs_subscription_id)}).then(function(res){
+                        console.log(res);
+                    }).
+                    catch(function(err){
+                        console.log(err);
+                    });
 }
 function successSubscribe(repo_name){
     repo_name = repo_name.replace('.','\\.');
